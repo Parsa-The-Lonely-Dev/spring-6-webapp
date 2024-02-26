@@ -4,13 +4,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import parsa.springframework6.spring6webapp.domain.Author;
 import parsa.springframework6.spring6webapp.domain.Book;
+import parsa.springframework6.spring6webapp.domain.Publisher;
 import parsa.springframework6.spring6webapp.repositories.AuthorRepository;
 import parsa.springframework6.spring6webapp.repositories.BookRepository;
+import parsa.springframework6.spring6webapp.repositories.PublisherRepository;
 
 @Component
 public class BootstrapData implements CommandLineRunner {
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
+    private final PublisherRepository publisherRepository;
 
     public AuthorRepository getAuthorRepository() {
         return authorRepository;
@@ -19,10 +22,10 @@ public class BootstrapData implements CommandLineRunner {
     public BookRepository getBookRepository() {
         return bookRepository;
     }
-
-    public BootstrapData(AuthorRepository authorRepository, BookRepository bookRepository) {
+    public BootstrapData(AuthorRepository authorRepository, BookRepository bookRepository, PublisherRepository publisherRepository) {
         this.authorRepository = authorRepository;
         this.bookRepository = bookRepository;
+        this.publisherRepository = publisherRepository;
     }
 
     @Override
@@ -52,6 +55,14 @@ public class BootstrapData implements CommandLineRunner {
         ericSaved.getBooks().add(dddSaved);
         rodSaved.getBooks().add(noEJBSaved);
 
+        Publisher publisher = new Publisher();
+        publisher.setPublisherName ("My Publisher");
+        publisher.setAddress("123 Main"); publisherRepository.save(publisher);
+        Publisher publisherSaved = publisherRepository.save(publisher);
+
+        dddSaved.setPublisher(publisherSaved);
+        noEJBSaved.setPublisher(publisherSaved);
+
         authorRepository.save(ericSaved);
         authorRepository.save(rodSaved);
         bookRepository.save(dddSaved);
@@ -61,5 +72,6 @@ public class BootstrapData implements CommandLineRunner {
         System.out.println("Author Count: " + authorRepository.count());
         System.out.println("Book Count: " + bookRepository.count());
 
+        System.out.println("publisher Count: " + publisherRepository.count());
     }
 }
